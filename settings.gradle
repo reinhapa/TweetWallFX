@@ -17,6 +17,8 @@ project(":2d").name = "TweetWallFX-2D"
 include ':3d'
 project(":3d").name = "TweetWallFX-3D"
 
+include ':bison'
+project(":bison").name = "TweetWallFX-Bison"
 include ':devoxx'
 project(":devoxx").name = "TweetWallFX-Devoxx"
 include ':devoxx-2015'
