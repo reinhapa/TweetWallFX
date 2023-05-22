@@ -30,12 +30,13 @@ import java.time.format.TextStyle;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
+
 import org.tweetwallfx.conference.api.ConferenceClient;
 import org.tweetwallfx.conference.api.ScheduleSlot;
 import org.tweetwallfx.stepengine.api.DataProvider;
 import org.tweetwallfx.stepengine.api.config.StepEngineSettings;
-import static org.tweetwallfx.util.Nullable.valueOrDefault;
 
 /**
  * DataProvider Implementation for Schedule Data
@@ -109,14 +110,13 @@ public class ScheduleDataProvider implements DataProvider, DataProvider.Schedule
             Long initialDelay,
             Long scheduleDuration) implements ScheduledConfig {
 
-        @SuppressWarnings("unused")
         public Config(
                 final ScheduleType scheduleType,
                 final Long initialDelay,
                 final Long scheduleDuration) {
-            this.scheduleType = valueOrDefault(scheduleType, ScheduleType.FIXED_RATE);
-            this.initialDelay = valueOrDefault(initialDelay, 0L);
-            this.scheduleDuration = valueOrDefault(scheduleDuration, 5 * 60L);
+            this.scheduleType = Objects.requireNonNullElse(scheduleType, ScheduleType.FIXED_RATE);
+            this.initialDelay = Objects.requireNonNullElse(initialDelay, 0L);
+            this.scheduleDuration = Objects.requireNonNullElse(scheduleDuration, 5 * 60L);
         }
     }
 }

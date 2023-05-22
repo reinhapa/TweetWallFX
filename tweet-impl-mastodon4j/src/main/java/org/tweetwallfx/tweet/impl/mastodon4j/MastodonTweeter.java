@@ -23,13 +23,27 @@
  */
 package org.tweetwallfx.tweet.impl.mastodon4j;
 
+import static org.tweetwallfx.tweet.impl.mastodon4j.config.MastodonSettings.CONFIG_KEY;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.mastodon4j.core.MastodonClient;
 import org.mastodon4j.core.MastodonException;
 import org.mastodon4j.core.api.BaseMastodonApi;
 import org.mastodon4j.core.api.EventStream;
 import org.mastodon4j.core.api.MastodonApi;
-import org.mastodon4j.core.api.entities.Status;
 import org.mastodon4j.core.api.entities.AccessToken;
+import org.mastodon4j.core.api.entities.Status;
 import org.mastodon4j.core.api.entities.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,24 +55,6 @@ import org.tweetwallfx.tweet.api.TweetStream;
 import org.tweetwallfx.tweet.api.Tweeter;
 import org.tweetwallfx.tweet.api.User;
 import org.tweetwallfx.tweet.impl.mastodon4j.config.MastodonSettings;
-
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.mastodon4j.core.api.BaseMastodonApi.QueryOptions.Type.ACCOUNTS;
-import static org.mastodon4j.core.api.BaseMastodonApi.QueryOptions.Type.HASHTAGS;
-import static org.tweetwallfx.tweet.impl.mastodon4j.config.MastodonSettings.CONFIG_KEY;
 
 public class MastodonTweeter implements Tweeter {
     private static final Logger LOGGER = LoggerFactory.getLogger(MastodonTweeter.class);
@@ -234,7 +230,7 @@ public class MastodonTweeter implements Tweeter {
 
     private Stream<Status> queryAccount(BaseMastodonApi.QueryOptions queryOptions) {
         try {
-            return client.search(queryOptions.type(ACCOUNTS)).accounts().stream()
+            return client.search(queryOptions.type(BaseMastodonApi.QueryOptions.Type.ACCOUNTS)).accounts().stream()
                     .flatMap(account -> client.accounts().statuses(account.id()).stream());
         } catch (RuntimeException e) {
             LOGGER.error("Unexpected failure on backend", e);
@@ -244,7 +240,7 @@ public class MastodonTweeter implements Tweeter {
 
     private Stream<Status> queryHashtag(BaseMastodonApi.QueryOptions queryOptions) {
         try {
-            return client.search(queryOptions.type(HASHTAGS)).hashtags().stream()
+            return client.search(queryOptions.type(BaseMastodonApi.QueryOptions.Type.HASHTAGS)).hashtags().stream()
                     .flatMap(hashtag -> client.timelines().tag(hashtag.name()).stream());
         } catch (RuntimeException e) {
             LOGGER.error("Unexpected failure on backend", e);
